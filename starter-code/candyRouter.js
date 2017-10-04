@@ -41,8 +41,16 @@ router.put('/:id', (req, res) => {
 
 	candies = candies.map((el) => {
 		if (el.id == candyId){
-			let updatedCandy = req.body;
+			let updatedCandy = el;
+			// Update the candy with whatever keys were given
+			const keys = Object.keys(req.body);
+			keys.forEach((key) => {
+				updatedCandy[key] = req.body[key];
+			});
+			// dont let id be overriden
 			updatedCandy.id = el.id;
+
+			// replace the candy with the updated candy
 			return updatedCandy;
 		} else {
 			return el;
