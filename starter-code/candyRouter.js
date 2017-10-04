@@ -12,6 +12,8 @@ let candies = [
 	{"id":4,"name":"Candy Stick","color":"Blue"}
 ];
 
+let idCount = 4;
+
 // INDEX
 router.get('/', (req,res) => {
 	console.log("Hit INDEX route - returning all candies");
@@ -36,7 +38,7 @@ router.get('/:id', (req, res) => {
 // UPDATE
 router.put('/:id', (req, res) => {
 	console.log("Hit UPDATE route - updating a candy");
-	let candyId = req.params.id;
+	const candyId = req.params.id;
 	console.log(req.body);
 
 	candies = candies.map((el) => {
@@ -48,7 +50,7 @@ router.put('/:id', (req, res) => {
 				updatedCandy[key] = req.body[key];
 			});
 			// dont let id be overriden
-			updatedCandy.id = el.id;
+			updatedCandy.id = Number(candyId);
 
 			// replace the candy with the updated candy
 			return updatedCandy;
@@ -57,12 +59,30 @@ router.put('/:id', (req, res) => {
 		}
 	});
 
-	res.send('Candy updtated');
-
+	res.send('Candy updated');
 });
 
 // CREATE
+router.post('/', (req, res) => {
+	console.log("Hit CREATE route - posting new candy");
+	let newCandy =  req.body;
+
+	// give the new candy a unique ID
+	newCandy.id = ++idCount;
+
+	candies.push(newCandy);
+
+	res.send(JSON.stringify(newCandy));
+});
 
 // DESTROY
+router.delete('/:id', (req, res) => {
+	const candyId = req.params.id;
+	candies = candies.filter((candy) => {
+		return candy.id != candyId;
+	});
+
+	res.send(JSON.stringify({message: "deleted"}));
+});
 
 module.exports = router;
