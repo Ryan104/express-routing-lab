@@ -12,14 +12,49 @@ let candies = [
 	{"id":4,"name":"Candy Stick","color":"Blue"}
 ];
 
-//What would need to go into candies
-//in order to pass our first test?
-
-router.get('/', function(req,res) {
-	console.log("Hit / with GET : INDEX-returning all candis")
+// INDEX
+router.get('/', (req,res) => {
+	console.log("Hit INDEX route - returning all candies");
 	res.json(candies);
 });
 
-// Fill out the rest of the routes here
+
+// SHOW
+router.get('/:id', (req, res) => {
+	console.log("Hit SHOW route - returning a candy");
+	// the id requested can be found in the req.params
+	let candyId = req.params.id;
+
+	let candy = candies.filter((el) => {
+		return el.id == candyId; // find the candy with the requested id and return it
+	});
+
+	res.json(candy[0]); // send the user the requested candy
+});
+
+
+// UPDATE
+router.put('/:id', (req, res) => {
+	console.log("Hit UPDATE route - updating a candy");
+	let candyId = req.params.id;
+	console.log(req.body);
+
+	candies = candies.map((el) => {
+		if (el.id == candyId){
+			let updatedCandy = req.body;
+			updatedCandy.id = el.id;
+			return updatedCandy;
+		} else {
+			return el;
+		}
+	});
+
+	res.send('Candy updtated');
+
+});
+
+// CREATE
+
+// DESTROY
 
 module.exports = router;
