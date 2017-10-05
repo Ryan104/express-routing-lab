@@ -39,40 +39,52 @@ router.get('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
 	console.log("Hit UPDATE route - updating a candy");
 	const candyId = req.params.id;
-	console.log(req.body);
 
-	candies = candies.map((el) => {
-		if (el.id == candyId){
-			let updatedCandy = el;
-			// Update the candy with whatever keys were given
-			const keys = Object.keys(req.body);
-			keys.forEach((key) => {
-				updatedCandy[key] = req.body[key];
-			});
-			// dont let id be overriden
-			updatedCandy.id = Number(candyId);
+	const keys = Object.keys(req.body);
 
-			// replace the candy with the updated candy
-			return updatedCandy;
-		} else {
-			return el;
-		}
-	});
+	if (keys.indexOf('name') >= 0 && keys.indexOf('color') >= 0){
+		candies = candies.map((el) => {
+			if (el.id == candyId){
+				let updatedCandy = el;
 
-	res.send('Candy updated');
+				// Update the candy with whatever keys were given
+				keys.forEach((key) => {
+					updatedCandy[key] = req.body[key];
+				});
+				// dont let id be overriden
+				updatedCandy.id = Number(candyId);
+
+				// replace the candy with the updated candy
+				return updatedCandy;
+			} else {
+				return el;
+			}
+		});
+
+		res.send('Candy updated');
+	} else {
+		res.status(422).send('Please include both name and color');
+	}
+
+	
 });
 
 // CREATE
 router.post('/', (req, res) => {
 	console.log("Hit CREATE route - posting new candy");
 	let newCandy =  req.body;
+	const keys = Object.keys(req.body);
 
-	// give the new candy a unique ID
-	newCandy.id = ++idCount;
+	if (keys.indexOf('name') >= 0 && keys.indexOf('color') >= 0){
+		// give the new candy a unique ID
+		newCandy.id = ++idCount;
 
-	candies.push(newCandy);
+		candies.push(newCandy);
 
-	res.send(JSON.stringify(newCandy));
+		res.send(JSON.stringify(newCandy));
+	} else {
+		res.status(422).send('Please include both name and color');
+	}
 });
 
 // DESTROY
